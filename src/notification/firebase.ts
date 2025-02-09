@@ -14,21 +14,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-const generateToken = async () => {
+const generateToken = async () : Promise<string | null> => {
   const permission = await Notification.requestPermission();
-  console.log(permission);
 
+  let fcmToken: string | null = null;
   if(permission === "granted"){
-    console.log("Notification permission granted");
     await getToken(messaging, {
-      vapidKey:
-        "BPE5Ov7q7SyH7Dm6vPB9qS4xRgJCi6yNTiDC1RT3iuj91jq1fX5SpU6_aWXhcMOdct39KKr8xX_Y7YIhnqtgs1g",
+      vapidKey:import .meta.env.VITE_VAPID_KEY,
     }).then((token) => {
-      console.log(token);
-    }).catch((err) => {
-      console.log(err);
+      fcmToken =  token;
+    }).catch(() => {
+      fcmToken =  null
     });
   }
+
+  return fcmToken;
 
 };
 
